@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Desenvolvedor - Space Store Creator Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Bar Institucional Superior -->
+    <header class="navbar">
+        <a href="#" class="brand">
+            <div class="brand-icon">CS</div>
+            <span>Creator Space</span>
+        </a>
+        <nav class="nav-links">
+            <a href="#">Documentação</a>
+            <a href="#">Políticas da Loja</a>
+            <a href="#">Suporte ao Criador</a>
+        </nav>
+    </header>
+
+    <!-- Conteúdo Central -->
+    <main class="main-wrapper">
+        <div class="page-container">
+
+            <!-- Painel Informativo Lateral -->
+            <section class="info-panel">
+                <h2>Publique seus aplicativos na Space Store</h2>
+                <p>Junte-se à nossa rede oficial de desenvolvedores. Gerencie suas publicações, acompanhe métricas e alcance milhares de usuários com segurança e infraestrutura profissional.</p>
+                
+                <ul class="features-list">
+                    <li><span>✓</span> Publicação direta no ecossistema Space Store</li>
+                    <li><span>✓</span> Verificação automatizada de pacotes e assinatura SHA-256</li>
+                    <li><span>✓</span> Painel de controle completo no aplicativo Creator Space</li>
+                    <li><span>✓</span> Processamento rápido e seguro via Firebase Cloud</li>
+                </ul>
+            </section>
+
+            <!-- Card de Formulário de Cadastro -->
+            <section class="form-card">
+                <div class="form-header">
+                    <h1>Criar Conta de Desenvolvedor</h1>
+                    <p>Preencha os dados institucionais do seu estúdio ou perfil individual.</p>
+                </div>
+
+                <form id="developerForm">
+                    <div class="form-group">
+                        <label for="devName">Nome do Estúdio ou Desenvolvedor</label>
+                        <input type="text" id="devName" placeholder="Ex: DevStudio Games" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">E-mail Corporativo ou Principal</label>
+                        <input type="email" id="email" placeholder="seu-email@exemplo.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Senha de Acesso</label>
+                        <input type="password" id="password" placeholder="Mínimo de 6 caracteres" required minlength="6">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="promoCode">Código de Convite / Promoção (Opcional)</label>
+                        <input type="text" id="promoCode" placeholder="Insira o código recebido">
+                        <span class="field-hint">Insira caso possua cupom de isenção de taxa ou convite VIP.</span>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="termsCheck" required>
+                        <label for="termsCheck">
+                            Li e concordo com os <a href="#">Termos de Distribuição do Desenvolvedor</a> e as <a href="#">Diretrizes de Privacidade</a> da Space Store.
+                        </label>
+                    </div>
+
+                    <button type="submit" id="btnSubmit">Criar Conta Oficial</button>
+                </form>
+
+                <div id="statusMessage"></div>
+
+                <!-- Selos de Confiança -->
+                <div class="security-badges">
+                    <div class="badge-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                        <span>Conexão Segura SSL</span>
+                    </div>
+                    <div class="badge-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                        <span>Proteção Firebase</span>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Rodapé Institucional -->
+    <footer class="footer">
+        <p>&copy; 2026 Space Store & Creator Space. Todos os direitos reservados. Plataforma oficial de distribuição de aplicativos.</p>
+    </footer>
+
+    <!-- Firebase SDK (v10.8.0) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Cole aqui suas credenciais reais do Firebase do seu projeto
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY_AQUI",
+            authDomain: "SEU_PROJETO.firebaseapp.com",
+            projectId: "SEU_PROJETO_ID",
+            storageBucket: "SEU_PROJETO.appspot.com",
+            messagingSenderId: "SEU_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const form = document.getElementById('developerForm');
+        const statusMessage = document.getElementById('statusMessage');
+        const btnSubmit = document.getElementById('btnSubmit');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('devName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const promoCode = document.getElementById('promoCode').value.trim();
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "Processando Cadastro...";
+            statusMessage.style.display = "none";
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                await setDoc(doc(db, "desenvolvedores", user.uid), {
+                    uid: user.uid,
+                    nomeDesenvolvedor: name,
+                    email: email,
+                    codigoPromocional: promoCode !== "" ? promoCode : null,
+                    dataCadastro: new Date().toISOString(),
+                    role: "developer",
+                    statusConta: "ativo"
+                });
+
+                statusMessage.className = "status-success";
+                statusMessage.innerText = "Conta oficial criada com sucesso! Abra o app Creator Space para fazer login.";
+                statusMessage.style.display = "block";
+                form.reset();
+
+            } catch (error) {
+                statusMessage.className = "status-error";
+                statusMessage.innerText = "Falha no cadastro: " + error.message;
+                statusMessage.style.display = "block";
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "Criar Conta Oficial";
+            }
+        });
+    </script>
+</body>
+</html>
